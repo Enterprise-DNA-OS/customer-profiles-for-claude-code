@@ -1,11 +1,36 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
+    "name": "profile-record",
+    "title": "Customer profile review record",
+    "for_each": "select id,code as name from profiles order by code",
     "file": "name",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "Reviewed source links",
+        "sql": "select l.source,l.external_id,l.full_name,l.email,l.reviewed_by,l.reason from record_lineage l join memberships m on m.record_id=l.id where m.profile_id=$1 order by l.source,l.external_id"
+      },
+      {
+        "title": "Recorded preferences",
+        "note": "Preferences are scoped to channel and purpose. This document does not authorise a message.",
+        "sql": "select channel,purpose,decision,observed_on,evidence from latest_consent where profile_id=$1 order by channel,purpose"
+      }
+    ]
+  },
+  {
+    "name": "source-register",
+    "title": "Source purpose and retention review",
+    "for_each": "select id,code as name from sources order by code",
+    "file": "name",
+    "sections": [
+      {
+        "title": "Accountable owner and collection context",
+        "sql": "select code,name,owner,purpose,jurisdiction,notice_basis,last_import_at from sources where id=$1"
+      },
+      {
+        "title": "Records requiring retention review",
+        "note": "Review other retention duties before deletion. This system never deletes customer records automatically.",
+        "sql": "select external_id,full_name,collected_on,retention_until from source_records where source_id=$1 and retention_until<current_date order by retention_until"
+      }
     ]
   }
 ]

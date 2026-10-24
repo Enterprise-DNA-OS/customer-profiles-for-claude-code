@@ -1,13 +1,35 @@
 [
   {
     "name": "week",
-    "title": "This week",
-    "subtitle": "Customer Profiles for Claude Code: what needs attention, rendered by npm run view",
+    "title": "Customer data review",
+    "subtitle": "Source freshness, identity conflicts and overdue work",
     "sections": [
       {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "title": "Source health",
+        "sql": "select code,owner,freshness,records,unlinked from source_health order by code"
+      },
+      {
+        "title": "Identity conflicts",
+        "sql": "select code,name,email_variants,name_variants from profile_conflicts where email_variants>1 or name_variants>1"
+      },
+      {
+        "title": "Overdue actions",
+        "sql": "select * from attention order by due_on"
+      }
+    ]
+  },
+  {
+    "name": "identity-review",
+    "title": "Identity review queue",
+    "subtitle": "Candidates require evidence before linking. A shared email is not proof of identity.",
+    "sections": [
+      {
+        "title": "Possible duplicates",
+        "sql": "select left_record,right_record,left_name,right_name,review_reason from duplicate_candidates order by left_record,right_record"
+      },
+      {
+        "title": "Privacy review",
+        "sql": "select * from compliance_findings order by rule,reference"
       }
     ]
   }

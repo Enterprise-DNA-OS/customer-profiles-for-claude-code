@@ -1,0 +1,55 @@
+{
+  "data": [
+    {
+      "record_id": "EXP-1",
+      "full_name": "Tui Ngata",
+      "email": "tui@example.test",
+      "country": "NZ",
+      "collected_on": "2026-01-03",
+      "retention_until": "2027-01-03"
+    },
+    {
+      "record_id": "EXP-2",
+      "full_name": "Tui Ngata",
+      "email": "TUI@example.test",
+      "country": "NZ",
+      "collected_on": "2026-02-03",
+      "retention_until": "2027-02-03"
+    }
+  ],
+  "rowCount": 2,
+  "queryId": "synthetic-query",
+  "done": true,
+  "metadata": {
+    "record_id": {
+      "type": "VARCHAR",
+      "placeInOrder": 0,
+      "typeCode": 12
+    },
+    "full_name": {
+      "type": "VARCHAR",
+      "placeInOrder": 1,
+      "typeCode": 12
+    },
+    "email": {
+      "type": "VARCHAR",
+      "placeInOrder": 2,
+      "typeCode": 12
+    },
+    "country": {
+      "type": "VARCHAR",
+      "placeInOrder": 3,
+      "typeCode": 12
+    },
+    "collected_on": {
+      "type": "VARCHAR",
+      "placeInOrder": 4,
+      "typeCode": 12
+    },
+    "retention_until": {
+      "type": "VARCHAR",
+      "placeInOrder": 5,
+      "typeCode": 12
+    }
+  }
+}

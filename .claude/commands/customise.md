@@ -6,7 +6,7 @@ The operator will describe a change in their own words, for example "add a PO nu
 
 1. Read `CLAUDE.md`, the current schema in `supabase/migrations/`, and any command or document that touches the thing being changed. Say back in one line what you are about to change and where.
 2. Write the next numbered migration in `supabase/migrations/` (never edit an applied one). Keep names plain and lowercase. Default new columns sensibly so existing rows stay valid.
-3. Run `npm run migrate`. If it fails, fix the SQL and run it again.
+3. Test the migration and `npm test` on temporary data first. Back up the working database, then run `npm run migrate`. If it fails, fix the unapplied SQL and run it again.
 4. Update every place the change shows up: the CLI output, the affected slash commands, `views.json`, the document templates, the import mapping, and the README command table.
 5. Run `npm test`. Add an assertion for the new behaviour if the change is visible in a command's output.
 6. Update `brand.json` if the change is a branding one (business name, logo, colours) instead of a schema one, and rerun `npm run docs` or `npm run view` to show it.

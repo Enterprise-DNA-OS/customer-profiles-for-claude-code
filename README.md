@@ -1,115 +1,100 @@
-<h1 align="center">Customer Profiles for Claude Code</h1>
+# Customer Profiles for Claude Code
 
-<p align="center">
-  <strong>The open-source customer profile review system that is just a database and Claude Code.</strong>
-</p>
+Keep customer records from different systems in one database, with reviewed identity links, source evidence, preferences and a weekly data-quality review.
 
-<p align="center">
-  Created by <a href="https://www.enterprisedna.co"><strong>Enterprise DNA</strong></a>. Free and open source. Works with Claude Code, Codex, OpenCode or Cursor.
-</p>
+| Do it yourself | We customise it | We run it for you |
+|---|---|---|
+| Free, MIT. Install and run the demo. | Your source mappings, identity rules, review documents and access needs. | Installed and operated through Omni by Enterprise DNA. One setup fee, then a retainer. |
 
-<!-- three-doors -->
-<table align="center">
-  <tr>
-    <td align="center"><strong>Do it yourself</strong><br/>Clone it, run it, own it. Free, MIT.<br/><a href="#quick-start">Quick start</a></td>
-    <td align="center"><strong>We customise it</strong><br/>Your fields, your rules, your Salesforce Data 360 data brought across.<br/><a href="https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=salesforce-data-cloud">Book a call</a></td>
-    <td align="center"><strong>We run it for you</strong><br/>Installed, connected and operated inside Omni. Setup fee, then a retainer.<br/><a href="https://enterprisedna.co/omni/instead-of/salesforce-data-cloud?utm_source=github&utm_medium=readme&utm_campaign=salesforce-data-cloud">How it works</a></td>
-  </tr>
-</table>
+[Get your version built](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=salesforce-data-cloud) · [Instead of Salesforce Data 360](https://enterprisedna.co/omni/instead-of/salesforce-data-cloud)
 
-<p align="center">
-  <a href="#what-is-this">What is this</a> &bull;
-  <a href="#why-no-front-end">Why no front end</a> &bull;
-  <a href="#quick-start">Quick start</a> &bull;
-  <a href="#the-commands">Commands</a> &bull;
-  <a href="#instead-of-salesforce-data-cloud">Instead of Salesforce Data 360</a> &bull;
-  <a href="#want-it-installed-and-run-for-you">Installed for you</a> &bull;
-  <a href="#license">License</a>
-</p>
+## Start with a working review
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Node-20+-339933?style=flat-square" alt="Node 20+" />
-  <img src="https://img.shields.io/badge/PostgreSQL-any-336791?style=flat-square" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/PGlite-embedded-3ecf8e?style=flat-square" alt="PGlite" />
-  <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="MIT License" />
-</p>
-
----
-
-## What is this
-
-Customer Profiles for Claude Code does the job you pay Salesforce Data 360 for, as a Postgres database and a set of agent commands. There is no web front end. You open the folder in [Claude Code](https://claude.com/claude-code) (or Codex, OpenCode, Cursor: see `AGENTS.md`) and ask for what you want in plain language. It runs the right query, and it can answer questions the Salesforce Data 360 dashboard cannot.
-
-<!-- TODO(author): the annual bill. One sentence: what a 10 to 50 person business typically pays Salesforce Data 360 per year, all in, with a source. -->
-
-Want the same thing with a web front end, or built on a different stack? That is a customisation, and it is exactly what Enterprise DNA does: [book a call](https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=salesforce-data-cloud).
-
-<!-- TODO(author): two or three sentences on what this specific product covers and who it is for. -->
-
-## Why no front end
-
-- The front end was only ever there because the database was hard to talk to. That is no longer true.
-- Your data sits in plain Postgres tables you own. Any tool can read them. No export, no lock-in.
-- No seats, no tiers, no add-ons. Read [docs/why-no-front-end.md](docs/why-no-front-end.md) for the honest trade-offs too.
-
-## Quick start
-
-Sixty seconds, no database install (an embedded Postgres runs inside Node):
+Node 20 or later. No cloud database or vendor credentials needed for the demo.
 
 ```bash
 git clone https://github.com/Enterprise-DNA-OS/customer-profiles-for-claude-code.git
 cd customer-profiles-for-claude-code
 npm install
 npm run demo
+npm run profiles -- duplicates
+npm run profiles -- profile --ref=MERE
+npm run view
+npm run docs
 ```
 
-Then open the folder in Claude Code and type a slash command. <!-- TODO(author): name the first command to try. -->
+Open the folder in Claude Code, Codex, OpenCode or Cursor. AGENTS.md and CLAUDE.md point every runtime to the same recipes. PGlite persists locally under .data/db. DATABASE_URL selects PostgreSQL; DATA_DIR selects a different local directory. Never seed a working customer database.
 
-### Use it with your own Postgres or Supabase
+The fictional Kauri data has three sources, six records, a shared household mailbox, an old address conflict, a withdrawal, overdue reviews and a stale import. Dates are relative to the first seed. Repeated seed runs preserve existing records.
 
-Copy `.env.example` to `.env`, set `DATABASE_URL`, then `npm run migrate`. Same commands, shared data, no per-seat fee.
+## What the system does
 
-## The commands
+The 27-command CLI supports --json everywhere. Run `npm run profiles -- help` for exact options. References accept exact codes, partial UUIDs and case-insensitive names; ambiguous matches list candidates and exit 1. Records use SOURCE:external-id codes. Every write names its actor.
 
-<!-- TODO(author): a table of the slash commands in .claude/commands and what each one does. -->
+Monday: /source-health checks imported coverage, /duplicates brings possible matches to review, /conflicts checks existing links, /consent-review reads preference evidence, and /retention-review checks the business's review dates. /weekly-review combines source health, identity conflicts, overdue actions and privacy findings. /add-action assigns the next job; /close-action requires evidence. /draft-review writes a local draft and never sends.
 
-| Command | What it does |
-|---|---|
-| `/...` | ... |
+Source records remain separate. Same-email candidates are suggestions, never automatic merges. /create-profile and /link record the operator's evidence. /unlink reverses a mistaken link without deleting the source record. Conflicting emails and names remain visible; the base does not silently pick a winning value. An imported identity change removes the old link and records why in the audit history.
 
-## Instead of salesforce-data-cloud
+Preferences are scoped to profile, channel and purpose. Latest observed date wins. On the same date, denied wins over unknown, then granted, regardless of import order. Missing preferences mean no evidence, not permission. The CLI does not produce a send-authorised audience or contact a destination.
 
-<!-- TODO(author): how to bring data across from Salesforce Data 360; link docs/replace-salesforce-data-cloud.md -->
+This is an offline customer-profile review system. It does not replace Data 360's entire platform, live ingestion, activation, streaming or infrastructure. Data 360 already supports identity resolution and analysis. The reason to use this build is ownership of a narrower workflow and rules you can change. No claim is made that the vendor cannot answer these questions.
 
-## Architecture
+## Ten questions this build answers
 
+1. Which source has stopped arriving? `source-health`.
+2. Which source has no accountable owner? `compliance`.
+3. Which records share an email but have different names? `duplicates`.
+4. Which reviewed profile has conflicting email addresses? `conflicts`.
+5. Who linked this source record and on what evidence? `profile --ref=MERE`.
+6. Which newsletter preference is the latest, including a withdrawal? `consent-review`.
+7. Which source records have reached our retention review date? `retention-review`.
+8. Which indirect-collection notices still need review? `compliance`.
+9. Which review actions are overdue and who owns them? `attention`.
+10. Which identity changes broke a previous profile link? `audit`.
+
+## Bring your history
+
+Have your authorised Data 360 operator export Query API V2 responses using the documented projection. Obtain every batch, preserving query IDs and completion flags. A mapped CSV with the same columns also works. The on-screen preview is not a complete export.
+
+```bash
+npm run profiles -- add-source --code=LIVE --name="Customer history" --owner="Data owner" --purpose="Customer service" --jurisdiction=NZ --notice="Approved collection notice reference" --actor="Operator"
+npm run profiles -- import salesforce-data-cloud --source=LIVE --file=imports/query.json --actor="Operator" --dry-run
+npm run profiles -- import salesforce-data-cloud --source=LIVE --file=imports/query.json --actor="Operator"
 ```
-customer-profiles-for-claude-code/
-  CLAUDE.md                 how the operator wants this run (routing table + house rules)
-  AGENTS.md                 the same, for Codex / OpenCode / Cursor / Gemini CLI
-  .claude/commands/         the slash commands
-  scripts/                  the CLI the commands drive
-  scripts/lib/db.mjs        one adapter: DATABASE_URL (pg) or embedded PGlite
-  supabase/migrations/      plain SQL schema
-  supabase/seed.sql         demo data
-  docs/                     the thesis and the migration guide
-```
 
-## Built for coding agents
+The import command handles the saved export, not vendor authentication. Read [the export and mapping guide](docs/replace-salesforce-data-cloud.md) before the first import. The sample fixture is synthetic and follows the documented response envelope. A real business export must be reconciled before adoption. Files load into memory; no enterprise-scale throughput claim is made.
 
-The database, CLI and command recipes work with Claude Code, Codex, OpenCode or Cursor. Ask your coding agent for a new command and have it implement and test the change against the same records.
+Identical records are skipped. Changed rows reject the complete batch unless you explicitly add --update. Updates preserve before-and-after evidence. A changed name, email or country removes that record's existing profile link for review. Imports preserve source properties, but do not migrate vendor matching rules, unified IDs, consent records or segments automatically.
 
-## Contributing
+## Documents and views
 
-Issues and pull requests are welcome. Keep the shape: plain SQL, a small CLI, a slash command per recurring job, no front end.
+Set business name, logo and colours in brand.json. `npm run docs` renders a source purpose and retention register plus one profile review record per profile. `npm run view` renders the weekly review and duplicate-review queue. They are branded, read-only HTML snapshots with escaped content and print styles. Review scope before sharing: these files contain the records available to the trusted database operator.
 
-## Want it installed and run for you?
+## Your first hour: ten things to ask for
 
-Enterprise DNA installs Customer Profiles for Claude Code for your business, migrates your Salesforce Data 360 data, connects it to the rest of your tools, and runs it for you as part of **Omni**, our managed Command Center. One setup fee, then a monthly retainer.
+1. Put our name and logo on the source register.
+2. Import a sample export without saving it.
+3. Reconcile its count with the original query.
+4. Record the owner and purpose for every source.
+5. Agree which evidence makes two records the same person.
+6. Review shared-email candidates before linking them.
+7. Record withdrawal evidence without creating a contact list.
+8. Set retention review dates under our actual policy.
+9. Assign the oldest unresolved identity review.
+10. Add our internal customer reference to the profile record.
 
-- Book a call: [enterprisedna.co/omni/book](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=salesforce-data-cloud)
-- Read more: [enterprisedna.co/omni/instead-of/salesforce-data-cloud](https://enterprisedna.co/omni/instead-of/salesforce-data-cloud?utm_source=github&utm_medium=readme&utm_campaign=salesforce-data-cloud)
+/customise tests a forward migration on temporary data before applying it. /new-view extends the existing renderer. [What a front end adds](docs/why-no-front-end.md).
 
-## License
+## Tests and operation
 
-MIT. Copyright (c) 2026 Enterprise DNA.
+`npm test` exercises every command on temporary data, including import rollback, incomplete batches, repeat imports, identity change unlinking, ambiguous references, preference conflicts, generated documents and escaped HTML. CI defines Linux and Windows Node 20/22 jobs plus PostgreSQL 17. Check actual CI results; a workflow file is not evidence those environments passed.
+
+This is a single-business trusted-operator tool. Table access is closed to public database roles; there is no tenant isolation or staff login system. Use the database owner for local operation and scope production access explicitly. [Privacy checks and sources](docs/compliance.md) · [Operations and backup](docs/operations.md) · [Selection research](docs/research.md).
+
+## Built and run for you
+
+Enterprise DNA maps the agreed source history, adds your review rules, builds a web view or different stack when needed, and operates your version through Omni by Enterprise DNA. One setup fee, then a retainer. Hosting and agent usage have their own costs.
+
+[Book 30 minutes with Sam](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=salesforce-data-cloud).
+
+MIT. Not affiliated with Salesforce or Anthropic.
