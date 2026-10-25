@@ -6,7 +6,7 @@ Keep customer records from different systems in one database, with reviewed iden
 |---|---|---|
 | Free, MIT. Install and run the demo. | Your source mappings, identity rules, review documents and access needs. | Installed and operated through Omni by Enterprise DNA. One setup fee, then a retainer. |
 
-[Get your version built](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=salesforce-data-cloud) · [Instead of Salesforce Data 360](https://enterprisedna.co/omni/instead-of/salesforce-data-cloud)
+[Get your version built](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=salesforce-data-cloud) · [Instead of Salesforce Data 360](https://enterprisedna.co/omni/instead-of/salesforce-data-cloud?utm_source=github&utm_medium=readme&utm_campaign=salesforce-data-cloud)
 
 ## Start with a working review
 
